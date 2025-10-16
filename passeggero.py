@@ -3,5 +3,8 @@ class Passeggero:
         self.numero_univoco = str(numero_univoco)
         self.nome = str(nome)
         self.cognome = str(cognome)
+        self.cabina = ""
+    def assegna_cabina(self,codice_cabina):
+        self.cabina = codice_cabina
     def __str__(self):
-        return f"{self.numero_univoco} {self.nome} {self.cognome}"
+        return f"{self.numero_univoco} {self.nome} {self.cognome} {self.cabina}"

@@ -8,7 +8,7 @@ class Crociera:
         self.lista_cabine = []
         self.lista_prenotazioni= []
 
-
+    ##utilizzo i metodi getter e setter per il cambio del nome
 
     @property
     def nome(self):
@@ -25,19 +25,19 @@ class Crociera:
             with open(file_path, 'r', encoding='utf-8') as infile:
                 for line in infile:
                     riga = line.strip().split(",")
-                    if len(riga)==5 and not riga[4].isdigit():
+                    if len(riga)==5 and not riga[4].isdigit(): ##verifico appartenenza classe cabina Deluxe
                         codice, numero_letti, numero_ponte, prezzo,tipologia = riga
                         new_cabina = Deluxe(codice,numero_letti,numero_ponte,prezzo,tipologia)
                         cabine.append(new_cabina)
-                    elif len(riga)==3:
+                    elif len(riga)==3:  ##verifico appartenenza classe passeggero
                         codice_univoco,nome,cognome= riga
                         new_passeggero = Passeggero(codice_univoco,nome,cognome)
                         passeggeri.append(new_passeggero)
-                    elif len(riga) == 4:
+                    elif len(riga) == 4: ##verifico appartenenza classe standard
                         codice, numero_letti, numero_ponte, prezzo = riga
                         new_cabina = Cabina(codice,numero_letti,numero_ponte,prezzo)
                         cabine.append(new_cabina)
-                    elif len(riga) == 5 and riga[4].isdigit():
+                    elif len(riga) == 5 and riga[4].isdigit(): ##verifico appartenenza classe cabinaAnimali
                         codice, numero_letti, numero_ponte, prezzo, numero_max = riga
                         new_cabina = CabinaAnimali(codice,numero_letti,numero_ponte,prezzo,numero_max)
                         cabine.append(new_cabina)
@@ -52,33 +52,46 @@ class Crociera:
         condizione3= True
         condizione4= True
         for i in self.lista_passeggeri:
-            if i.numero_univoco == codice_passeggero:
+            if i.numero_univoco == codice_passeggero:  ##verifico che passeggero esista
                 condizione = True
         for i in self.lista_cabine:
-            if i.codice == codice_cabina:
+            if i.codice == codice_cabina:   ##verifico che cabina esista
                 condizione2 = True
+        for i in self.lista_cabine:
+            if not i.disponibile:       ##verifico che la cabina sia disponibile usando
+                condizione3 = False      ##l'attributo di classe disponibilità
         for i in prenotazioni:
-            if i.codice_cabina == codice_cabina:
-                condizione3 = False
-        for i in prenotazioni:
-            if i.codice_passeggero == codice_passeggero:
-                condizione4= False
+            if i.codice_passeggero == codice_passeggero:   ##verifico che il passeggero non abbia
+                condizione4= False                        ##un'altra cabina assegnata
+        ##se una delle 4 condizioni non è soddisfatta il metodo solleva un eccezione
         if condizione==False or condizione2==False or condizione3==False or condizione4==False:
-            raise Exception()
+            raise Exception("eccezione: la cabina non esiste o il passeggero non esiste o cabina già assegnata o passeggero già fornito di cabina")
+        ##in caso contrario la prenotazione può avvenire
         else:
+            elemento = None
+            elemento2= None
             prenotazione = Prenotazione(codice_cabina,codice_passeggero)
             prenotazioni.append(prenotazione)
+            for i in self.lista_passeggeri:
+                if i.numero_univoco == codice_passeggero:
+                    elemento2 = i      ##in questo modo preparo già la struttura dati
+                else:                 ##per il punto 5 andando ad aggiungere come attributo di classe
+                    pass           ##tramite il metodo associa_cabina il codice della cabina al passeggero
+            if elemento2 is not None:
+                elemento2.assegna_cabina(codice_cabina)
+
             for i in self.lista_cabine:
                 if i.codice == codice_cabina:
-                    oggetto = i                ##utilizzo metodo disponibilità per aggiornare
+                    elemento = i                ##utilizzo metodo disponibilità per aggiornare
                 else:                           ##lo stato della cabina
                     pass
-            oggetto.disponibilità()
+            if elemento is not None:
+                elemento.disponibilità()
 
     def cabine_ordinate_per_prezzo(self):
-        for i in self.lista_cabine:
-            i.calcolo_prezzo()
-        return sorted(self.lista_cabine,key=lambda i: i.prezzo)
+        for i in self.lista_cabine:               ##dopo aver richiamato il metodo calcolo_prezzo diverso per ogni tipo di cabina
+            i.calcolo_prezzo()                     ##utilizzo lambda function per ordinare la lista delle cabine
+        return sorted(self.lista_cabine,key=lambda i: i.prezzo)   ##in base al prezzo
 
 
     def elenca_passeggeri(self):
