@@ -90,8 +90,8 @@ class Crociera:
 
     def cabine_ordinate_per_prezzo(self):
         for i in self.lista_cabine:               ##dopo aver richiamato il metodo calcolo_prezzo diverso per ogni tipo di cabina
-            i.calcolo_prezzo()                     ##utilizzo lambda function per ordinare la lista delle cabine
-        return sorted(self.lista_cabine,key=lambda i: i.prezzo)   ##in base al prezzo
+            i.calcolo_prezzo()                     ##utilizzo lambda expression per ordinare la lista delle cabine
+        return sorted(self.lista_cabine,key=lambda s: s.prezzo)   ##in base al prezzo
 
 
     def elenca_passeggeri(self):
